@@ -1,0 +1,26 @@
+* lvm-cache utils for Debian 8
+
+  Due to [[https://bugs.debian.org/cgi-bin/bugreport.cgi?bug%3D773731][https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=773731]], a Debian
+  system with /usr on a lvm-cache is not able to boot.
+
+  To remedy this, use the scripts provided here.
+
+  =lddr.py= is a Python3 script that recursively resolves dynamics
+  libraries. This is needed as =cache_check=, used with lvm-cache, depends on
+  libstdc++. We use it here with the =--copy= argument to get =lddr.py= to copy
+  the libraries to where we want them. Place it in =/usr/local/bin= unless you
+  change the path in =lvm-cache.sh=.
+
+  =lvm-cache.sh= is a initramfs hook. It should be dropped in
+  =/etc/initramfs-tools/hools/lvm-cache.sh= and made executable. It runs
+  =lddr.py= against =cache_check=, and copied the needed =dm_= modules to the
+  initramfs.
+
+  When the files are in their correct positions, run =update-initramfs -u -k
+  all= to update the initramfs for all installed kernels.
+
+  To check whether it worked, either reboot (and risk having an unbootable
+  system), or run the following command to copy the initramfs, unzip and un-cpio
+  it:
+
+: cp /boot/initrd.img-`uname -r` . && mv initrd.img-`uname -r`{,.gz} && gunzip initrd.img-3.16.0-4-amd64.gz && cpio -ivf < initrd.img-`uname -r`
