@@ -26,7 +26,7 @@
 : cp /boot/initrd.img-`uname -r` . && mv initrd.img-`uname -r`{,.gz} && gunzip initrd.img-3.16.0-4-amd64.gz && cpio -ivf < initrd.img-`uname -r`
 
 ** Alternative
-   Instead of `lddr.py`, use the following command:
+   Instead of =lddr.py=, use the following command:
 
 : LD_TRACE_LOADED_OBJECTS=1 LD_VERBOSE=1 /lib64/ld-linux-x86-64.so.2 /usr/sbin/cache_check
 
