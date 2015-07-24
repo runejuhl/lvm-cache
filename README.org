@@ -5,13 +5,13 @@
 
   To remedy this, use the scripts provided here.
 
-  =lddr.py= is a Python3 script that recursively resolves dynamics
+  =lddr.py= is a Python3 script that recursively resolves dynamic
   libraries. This is needed as =cache_check=, used with lvm-cache, depends on
   libstdc++. We use it here with the =--copy= argument to get =lddr.py= to copy
   the libraries to where we want them. Place it in =/usr/local/bin= unless you
   change the path in =lvm-cache.sh=.
 
-  =lvm-cache.sh= is a initramfs hook. It should be dropped in
+  =lvm-cache.sh= is an initramfs hook. It should be dropped in
   =/etc/initramfs-tools/hools/lvm-cache.sh= and made executable. It runs
   =lddr.py= against =cache_check=, and copied the needed =dm_= modules to the
   initramfs.
@@ -24,3 +24,10 @@
   it:
 
 : cp /boot/initrd.img-`uname -r` . && mv initrd.img-`uname -r`{,.gz} && gunzip initrd.img-3.16.0-4-amd64.gz && cpio -ivf < initrd.img-`uname -r`
+
+** Alternative
+   Instead of `lddr.py`, use the following command:
+
+: LD_TRACE_LOADED_OBJECTS=1 LD_VERBOSE=1 /lib64/ld-linux-x86-64.so.2 /usr/sbin/cache_check
+
+   This, and a bit of shell scripting, should remove the Python dependency.
